@@ -14,29 +14,29 @@ namespace Symfony\AI\Platform\Bridge\Replicate;
 use Symfony\AI\Platform\Bridge\Meta\Llama;
 use Symfony\AI\Platform\Exception\RuntimeException;
 use Symfony\AI\Platform\Model;
-use Symfony\AI\Platform\Response\RawResponseInterface;
-use Symfony\AI\Platform\Response\ResponseInterface;
-use Symfony\AI\Platform\Response\TextResponse;
-use Symfony\AI\Platform\ResponseConverterInterface;
+use Symfony\AI\Platform\Result\RawResultInterface;
+use Symfony\AI\Platform\Result\ResultInterface;
+use Symfony\AI\Platform\Result\TextResult;
+use Symfony\AI\Platform\ResultConverterInterface;
 
 /**
  * @author Christopher Hertel <mail@christopher-hertel.de>
  */
-final readonly class LlamaResponseConverter implements ResponseConverterInterface
+final readonly class LlamaResultConverter implements ResultConverterInterface
 {
     public function supports(Model $model): bool
     {
         return $model instanceof Llama;
     }
 
-    public function convert(RawResponseInterface $response, array $options = []): ResponseInterface
+    public function convert(RawResultInterface $result, array $options = []): ResultInterface
     {
-        $data = $response->getRawData();
+        $data = $result->getData();
 
         if (!isset($data['output'])) {
             throw new RuntimeException('Response does not contain output');
         }
 
-        return new TextResponse(implode('', $data['output']));
+        return new TextResult(implode('', $data['output']));
     }
 }
